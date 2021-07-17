@@ -1,0 +1,150 @@
+---
+- hosts: localhost
+  connection: local
+
+  roles:
+    - role: faba.docker
+      tags:
+        - docker
+        - docker-network
+
+  vars:
+    # Network variables
+    hostname: "nuccy"
+    ip: "192.168.1.101"
+    CIDR: "24"
+    gateway: "192.168.1.1"
+    dnsserver: "192.168.0.100"
+
+    vlan: "vlan100"
+
+    gaming_rig: "192.168.1.125"
+
+    mariadb_ha_pwd: "*E275DF34A6A800598C86138DB6CDB89B9CAD51F1"
+
+    sasserver: "192.168.1.100"
+    synology: "192.168.1.196"
+    raspberrypi4: "192.168.1.102"
+
+    androidtv: "192.168.1.162"
+    mibox: "192.168.1.123"
+
+    synology_host: "{{ synology }}"
+    synology_port: "5000"
+
+    importfolder: "/srv/import"
+
+    downloadfolder: "/downloads"
+    downloadshare: "//synology/downloads"
+
+    seriesfolder: "/mnt/synology/tv"
+    seriesshare: "//synology/tv"
+
+    moviesfolder: "/mnt/synology/movies"
+    moviesshare: "//synology/movies"
+
+    backupfolder: "/mnt/synology/backup"
+    backupshare: "//synology/backup"
+
+    videofolder: "/mnt/synology/videos"
+    videoshare: "//synology/videos"
+
+    #############################
+
+    # Docker variables
+    update_images: "no"
+    recreate_container: "no"
+    docker_appdata: "/appdata"
+    docker_temppath: "/tmp/Docker/"
+
+    container_name:
+    container_image:
+    container_port:
+    container_volumes:
+      - "{{ docker_appdata }}/{{ container_name }}:/config"
+
+    container_env:
+
+  tasks:
+    - name: "Create {{ container_name }} folder"
+      file:
+        state: directory
+        path: "{{ volume }}"
+      loop: "{{ container_volumes }}"
+      loop_control:
+        loop_var: volume
+
+    - name: "Create {{ container_name }} Config"
+      template:
+        src: "{{ playbook_dir }}/config/{{ container_name }}/{{ container_name }}.yml"
+        dest: "{{ docker_appdata }}/{{ docker.{{ container_name }}.name }}/{{ container_name }}.yml"
+        mode: "0644"
+        owner: root
+        group: root
+
+    - name: "Create {{ container_name }} tmp folder"
+      file:
+        path: "{{ docker_temppath }}/{{ container_name }}"
+        mode: "777"
+        owner: root
+        group: root
+        state: directory
+        recurse: yes
+
+    - name: "Create {{ container_name }} Docker Compose file"
+      template:
+        src: "{{ playbook_dir }}/docker-compose.yml"
+        dest: "{{ docker_temppath }}//{{ container_name }}/docker-compose.yml"
+        mode: "0644"
+        owner: root
+        group: root
+
+    - name: "Create Redis folder"
+      file:
+        state: directory
+        path: "{{ item }}"
+      with_items:
+        - "{{ docker_appdata }}/{{ docker.authelia.name }}-redis/"
+        - "{{ docker_appdata }}/{{ docker.authelia.name }}-redis/data"
+        - "{{ docker_appdata }}/{{ docker.authelia.name }}-redis/conf"
+      tags:
+        - docker
+        - authelia
+
+    - name: "Create Redis config file"
+      template:
+        src: "{{ playbook_dir }}/config/redis_authelia/redis.conf"
+        dest: "{{ docker_appdata }}/{{ docker.authelia.name }}-redis/conf/redis.conf"
+        mode: "0644"
+        owner: root
+        group: root
+      tags:
+        - docker
+        - {{ container_name }}
+        - authelia
+
+    - name: "Create Authelia config file"
+      template:
+        src: "{{ playbook_dir }}/config/authelia/configuration.yml"
+        dest: "{{ docker_appdata }}/{{ docker.authelia.name }}/configuration.yml"
+        mode: "0640"
+        owner: root
+        group: docker
+      tags:
+        - docker
+        - {{ container_name }}
+        - authelia
+
+    - name: "Add Container to Netbox"
+      include_role:
+        name: netbox-docker
+        apply:
+          tags:
+            - unifi
+      vars:
+        netbox_api: "{{ netbox_apitoken }}"
+        container_name: "{{ container_name }}"
+        container_port: "{{ container_port }}"
+      tags:
+        - docker
+        - unifi
