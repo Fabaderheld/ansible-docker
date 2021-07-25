@@ -66,6 +66,19 @@
     container_env:
 
   tasks:
+    - name: "Import sercrets Vault"
+      include_vars: "{{ playbook_dir }}/secrets.yml"
+      tags:
+        - always
+
+    - name: "Add Container to Netbox"
+      include_role:
+        name: docker-netbox
+      vars:
+        netbox_api: "{{ netbox_apitoken }}"
+        # container_name: "{{ container_name }}"
+        # container_port: "{{ container_port }}"
+
     - name: "Create {{ container_name }} folder"
       file:
         state: directory
@@ -99,52 +112,19 @@
         owner: root
         group: root
 
-    - name: "Create Redis folder"
-      file:
-        state: directory
-        path: "{{ item }}"
-      with_items:
-        - "{{ docker_appdata }}/{{ docker.authelia.name }}-redis/"
-        - "{{ docker_appdata }}/{{ docker.authelia.name }}-redis/data"
-        - "{{ docker_appdata }}/{{ docker.authelia.name }}-redis/conf"
-      tags:
-        - docker
-        - authelia
-
-    - name: "Create Redis config file"
-      template:
-        src: "{{ playbook_dir }}/config/redis_authelia/redis.conf"
-        dest: "{{ docker_appdata }}/{{ docker.authelia.name }}-redis/conf/redis.conf"
+    - name: "Create {{ container_name }} env file"
+      lineinfile:
+        path: "{{ docker_temppath }}//{{ container_name }}/.env"
         mode: "0644"
         owner: root
         group: root
-      tags:
-        - docker
-        - {{ container_name }}
-        - authelia
+        line: "{{ env }}"
+        create: yes
+      loop: "{{ container_env }}"
+      loop_control:
+        loop_var: env
 
-    - name: "Create Authelia config file"
-      template:
-        src: "{{ playbook_dir }}/config/authelia/configuration.yml"
-        dest: "{{ docker_appdata }}/{{ docker.authelia.name }}/configuration.yml"
-        mode: "0640"
-        owner: root
-        group: docker
-      tags:
-        - docker
-        - {{ container_name }}
-        - authelia
-
-    - name: "Add Container to Netbox"
-      include_role:
-        name: netbox-docker
-        apply:
-          tags:
-            - unifi
-      vars:
-        netbox_api: "{{ netbox_apitoken }}"
-        container_name: "{{ container_name }}"
-        container_port: "{{ container_port }}"
-      tags:
-        - docker
-        - unifi
+    - name: "Start {{ container_name }} container"
+      community.docker.docker_compose:
+        project_src: "{{ docker_temppath }}//{{ container_name }}"
+#      register: output

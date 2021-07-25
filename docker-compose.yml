@@ -2,11 +2,9 @@ networks:
 # Macvlan Network
   {{ macvlan_name }}:
     external: true
-    name: {{ macvlan_name }}
 
 # Backend Network
 #{{ container_name }}:
-#    name: {{ container_name }}
 
 services:
   {{ container_name }}:
@@ -22,7 +20,7 @@ services:
 
 # Postgres DB for container
   # postgres:
-  #   container_name: "{{ container_name }}-postgres"
+  #   container_name: "{{ container_name }}-postgres"s
   #   image: "postgres"
   #   restart: always
   #   networks:
