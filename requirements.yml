@@ -3,5 +3,8 @@ roles:
   - name: faba.docker
     src: https://github.com/Fabaderheld/faba.docker.git
 
+  - name: docker-netbox
+    src: https://github.com/Fabaderheld/docker-netbox.git
+
 collections:
   - name: netbox.netbox
