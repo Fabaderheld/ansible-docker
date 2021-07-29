@@ -17,7 +17,7 @@ services:
         ipv4_address: {{ container_ip.split("/")[0] }}
     environment:
       - PUID="{{ container_name }}"
-    volumes: {{ docker_volumes }}
+    volumes: {{ container_volumes }}
 
 # Postgres DB for container
   # postgres:
