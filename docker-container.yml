@@ -10,6 +10,7 @@
 
   vars:
     # Docker variables
+    macvlan_name: Docker
     update_images: "no"
     recreate_container: "no"
     docker_appdata: "/appdata"
