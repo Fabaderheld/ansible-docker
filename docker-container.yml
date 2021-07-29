@@ -45,13 +45,14 @@
       loop_control:
         loop_var: volume
 
-    - name: "Create {{ container_name }} Config"
-      template:
-        src: "{{ playbook_dir }}/config/{{ container_name }}/{{ container_name }}.yml"
-        dest: "{{ docker_appdata }}/{{ docker.{{ container_name }}.name }}/{{ container_name }}.yml"
-        mode: "0644"
-        owner: root
-        group: root
+    # Uncomment if config is used
+    # - name: "Create {{ container_name }} Config"
+    #   template:
+    #     src: "{{ playbook_dir }}/config/{{ container_name }}/{{ container_name }}.yml"
+    #     dest: "{{ docker_appdata }}/{{ docker.{{ container_name }}.name }}/{{ container_name }}.yml"
+    #     mode: "0644"
+    #     owner: root
+    #     group: root
 
     - name: "Create {{ container_name }} tmp folder"
       file:
@@ -70,17 +71,18 @@
         owner: root
         group: root
 
-    - name: "Create {{ container_name }} env file"
-      lineinfile:
-        path: "{{ docker_temppath }}//{{ container_name }}/.env"
-        mode: "0644"
-        owner: root
-        group: root
-        line: "{{ env }}"
-        create: yes
-      loop: "{{ container_env }}"
-      loop_control:
-        loop_var: env
+    # Uncomment if env file is needed
+    # - name: "Create {{ container_name }} env file"
+    #   lineinfile:
+    #     path: "{{ docker_temppath }}//{{ container_name }}/.env"
+    #     mode: "0644"
+    #     owner: root
+    #     group: root
+    #     line: "{{ env }}"
+    #     create: yes
+    #   loop: "{{ container_env }}"
+    #   loop_control:
+    #     loop_var: env
 
     - name: "Start {{ container_name }} container"
       community.docker.docker_compose:
