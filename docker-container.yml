@@ -9,48 +9,6 @@
         - docker-network
 
   vars:
-    # Network variables
-    hostname: "nuccy"
-    ip: "192.168.1.101"
-    CIDR: "24"
-    gateway: "192.168.1.1"
-    dnsserver: "192.168.0.100"
-
-    vlan: "vlan100"
-
-    gaming_rig: "192.168.1.125"
-
-    mariadb_ha_pwd: "*E275DF34A6A800598C86138DB6CDB89B9CAD51F1"
-
-    sasserver: "192.168.1.100"
-    synology: "192.168.1.196"
-    raspberrypi4: "192.168.1.102"
-
-    androidtv: "192.168.1.162"
-    mibox: "192.168.1.123"
-
-    synology_host: "{{ synology }}"
-    synology_port: "5000"
-
-    importfolder: "/srv/import"
-
-    downloadfolder: "/downloads"
-    downloadshare: "//synology/downloads"
-
-    seriesfolder: "/mnt/synology/tv"
-    seriesshare: "//synology/tv"
-
-    moviesfolder: "/mnt/synology/movies"
-    moviesshare: "//synology/movies"
-
-    backupfolder: "/mnt/synology/backup"
-    backupshare: "//synology/backup"
-
-    videofolder: "/mnt/synology/videos"
-    videoshare: "//synology/videos"
-
-    #############################
-
     # Docker variables
     update_images: "no"
     recreate_container: "no"
