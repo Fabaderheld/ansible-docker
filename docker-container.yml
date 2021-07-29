@@ -40,7 +40,7 @@
     - name: "Create {{ container_name }} folder"
       file:
         state: directory
-        path: "{{ volume }}"
+        path: "{{ volume.split(':')[0] }}"
       loop: "{{ container_volumes }}"
       loop_control:
         loop_var: volume
