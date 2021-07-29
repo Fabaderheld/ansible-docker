@@ -14,7 +14,7 @@ services:
     restart: always
     networks:
       {{ macvlan_name }}:
-        ipv4_address: "{{ container.ip }}"
+        ipv4_address: {{ container_ip.split("/")[0] }}
     environment:
       - PUID="{{ container_name }}"
     volumes: {{ docker_volumes }}
