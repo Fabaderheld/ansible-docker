@@ -24,7 +24,7 @@
 
     container_env:
 
-    traefik_config: "{{ docker_appdata }}/traefic/config"
+    traefik_config: "{{ docker_appdata }}/traefik/config"
 
   tasks:
     - name: "Import sercrets Vault"
@@ -59,6 +59,14 @@
     #     mode: "0644"
     #     owner: root
     #     group: root
+
+    - name: "Create traefik folder"
+      file:
+        state: directory
+        path: "{{ traefik_config }}"
+        owner: root
+        group: docker
+        mode: 0777
 
     - name: "Create {{ container_name }} traeffic config"
       template:
