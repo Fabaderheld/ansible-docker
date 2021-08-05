@@ -24,6 +24,8 @@
 
     container_env:
 
+    traefik_config: "{{ docker_appdata }}/traefic/config"
+
   tasks:
     - name: "Import sercrets Vault"
       include_vars: "{{ playbook_dir }}/secrets.yml"
@@ -33,6 +35,9 @@
     - name: "Add Container to Netbox"
       include_role:
         name: docker-netbox
+        apply:
+          tags:
+            - prestartup
       vars:
         netbox_api: "{{ netbox_apitoken }}"
         # container_name: "{{ container_name }}"
@@ -54,6 +59,14 @@
     #     mode: "0644"
     #     owner: root
     #     group: root
+
+    - name: "Create {{ container_name }} traeffic config"
+      template:
+        src: "{{ playbook_dir }}/traefik.yaml"
+        dest: "{{ traefik_config }}/{{ container_name }}.yaml"
+        mode: "0664"
+        owner: root
+        group: docker
 
     - name: "Create {{ container_name }} tmp folder"
       file:
@@ -88,7 +101,7 @@
     - name: "Start {{ container_name }} container"
       community.docker.docker_compose:
         project_src: "{{ docker_temppath }}//{{ container_name }}"
-#      register: output
+    #      register: output
 
     - name: "Add Container Infos to Netbox"
       include_role:

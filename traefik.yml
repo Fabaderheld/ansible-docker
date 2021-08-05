@@ -1,0 +1,19 @@
+http:
+  routers:
+    {{ container_name }}:
+      rule: "Host(`{{ container_name }}.fab-it.biz`)"
+      entryPoints: "https"
+      middlewares:
+        - authelia@file
+      service: {{ container_name }}
+      tls:
+        certResolver: "hetzner"
+
+  services:
+    {{ container_name }}:
+      loadBalancer:
+        servers:
+          - url: http://{{ container_ip.split("/")[0] }}:{{ container_port }}
+        healthCheck:
+          interval: "10s"
+          timeout: "3s"
