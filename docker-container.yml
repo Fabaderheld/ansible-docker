@@ -63,10 +63,18 @@
     #     owner: root
     #     group: root
 
+    - name: "Create traefik folder"
+      file:
+        state: directory
+        path: "{{ traefik_config }}"
+        owner: root
+        group: docker
+        mode: 0777
+
     - name: "Create {{ container_name }} traeffic config"
       template:
-        src: "{{ playbook_dir }}/traefik.yaml"
-        dest: "{{ traefik_config }}/{{ container_name }}.yaml"
+        src: "{{ playbook_dir }}/traefik.yml"
+        dest: "{{ traefik_config }}/{{ container_name }}.yml"
         mode: "0664"
         owner: root
         group: docker
