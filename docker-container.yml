@@ -24,6 +24,8 @@
 
     container_env:
 
+    external: false
+
     traefik_config: "{{ docker_appdata }}/traefic/config"
 
   tasks:
@@ -40,6 +42,7 @@
             - prestartup
       vars:
         netbox_api: "{{ netbox_apitoken }}"
+        # no need to declare only with multiple containers
         # container_name: "{{ container_name }}"
         # container_port: "{{ container_port }}"
 
