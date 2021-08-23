@@ -26,7 +26,7 @@
 
     external: false
 
-    traefik_config: "{{ docker_appdata }}/traefic/config"
+    traefik_config: "{{ docker_appdata }}/traefik/config"
 
   tasks:
     - name: "Import sercrets Vault"
@@ -71,7 +71,7 @@
         group: docker
         mode: 0777
 
-    - name: "Create {{ container_name }} traeffic config"
+    - name: "Create {{ container_name }} traefik config"
       template:
         src: "{{ playbook_dir }}/traefik.yml"
         dest: "{{ traefik_config }}/{{ container_name }}.yml"
