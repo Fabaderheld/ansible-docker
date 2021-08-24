@@ -20,14 +20,17 @@
     container_image:
     container_port:
     container_url: "{{ container_name }}.fab-it.biz"
+    container_external: false
     container_volumes:
       - "{{ docker_appdata }}/{{ container_name }}:/config"
 
     container_env:
 
-    external: false
+    
 
+    netbox_url: "netbox.fab-it.biz"
     traefik_config: "{{ docker_appdata }}/traefik/config"
+    pihole_config: "{{ docker_appdata }}//pihole/dnsmasq.d"
 
   tasks:
     - name: "Import sercrets Vault"
@@ -147,4 +150,4 @@
       failed_when: dnsanswer.status != 422 and dnsanswer.status != 200
       ignore_errors: yes
       loop: "{{ docker | dict2items }}"
-      when: "{{ external }} == true "
+      when: "{{ container_external }} == true "
