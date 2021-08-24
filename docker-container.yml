@@ -31,6 +31,7 @@
     netbox_url: "netbox.fab-it.biz"
     traefik_config: "{{ docker_appdata }}/traefik/config"
     pihole_config: "{{ docker_appdata }}//pihole/dnsmasq.d"
+    proxy_url: "treafik.fab-it.biz"
 
   tasks:
     - name: "Import sercrets Vault"
@@ -129,7 +130,7 @@
         # container_name: "{{ container_name }}"
         # container_port: "{{ container_port }}"
         
-    - name: "Add DNS Records"
+    - name: "Add external DNS Records"
       uri:
         url: "https://dns.hetzner.com/api/v1/records"
         method: POST
@@ -149,6 +150,13 @@
       changed_when: dnsanswer.status == 200
       failed_when: dnsanswer.status != 422 and dnsanswer.status != 200
       ignore_errors: yes
-      when: "{{ container_external }} == true "
+      when: "container_external == true "
+      tags:
+        - dns
+
+    - name: "Add external DNS Records"
+      lineinfile:
+        path: "{{ pihole_config }}/05-pihole-custom-cname.conf"
+        line: "CNAME={{ container_url }},{{ proxy_url }}"
       tags:
         - dns
