@@ -149,5 +149,6 @@
       changed_when: dnsanswer.status == 200
       failed_when: dnsanswer.status != 422 and dnsanswer.status != 200
       ignore_errors: yes
-      loop: "{{ docker | dict2items }}"
       when: "{{ container_external }} == true "
+      tags:
+        - dns
