@@ -26,8 +26,6 @@
 
     container_env:
 
-    
-
     netbox_url: "netbox.fab-it.biz"
     traefik_config: "{{ docker_appdata }}/traefik/config"
     pihole_config: "{{ docker_appdata }}//pihole/dnsmasq.d"
@@ -118,17 +116,6 @@
       community.docker.docker_compose:
         project_src: "{{ docker_temppath }}//{{ container_name }}"
     #      register: output
-
-    - name: "Add Container Infos to Netbox"
-      include_role:
-        name: docker-netbox
-        apply:
-          tags:
-            - poststartup
-      vars:
-        netbox_api: "{{ netbox_apitoken }}"
-        # container_name: "{{ container_name }}"
-        # container_port: "{{ container_port }}"
         
     - name: "Add external DNS Records"
       uri:
