@@ -19,6 +19,7 @@
     container_name:
     container_image:
     container_port:
+    container_url: "{{ container_name }}.fab-it.biz"
     container_volumes:
       - "{{ docker_appdata }}/{{ container_name }}:/config"
 
@@ -124,3 +125,26 @@
         netbox_api: "{{ netbox_apitoken }}"
         # container_name: "{{ container_name }}"
         # container_port: "{{ container_port }}"
+        
+    - name: "Add DNS Records"
+      uri:
+        url: "https://dns.hetzner.com/api/v1/records"
+        method: POST
+        headers:
+          Content-Type: application/json
+          Auth-API-Token: "{{ hetzner_apitoken }}"
+        body:
+          {
+            "value": "home.fab-it.biz.",
+            "ttl": 86400,
+            "type": "CNAME",
+            "name": "{{ container_url }}",
+            "zone_id": "ouWiSmyvwUeX8eZHdCwf23",
+          }
+        body_format: json
+      register: dnsanswer
+      changed_when: dnsanswer.status == 200
+      failed_when: dnsanswer.status != 422 and dnsanswer.status != 200
+      ignore_errors: yes
+      loop: "{{ docker | dict2items }}"
+      when: "{{ external }} == true "
