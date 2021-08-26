@@ -141,9 +141,26 @@
       tags:
         - dns
 
-    - name: "Add external DNS Records"
+    - name: "Add internal DNS Records"
       lineinfile:
         path: "{{ pihole_config }}/05-pihole-custom-cname.conf"
         line: "CNAME={{ container_url }},{{ proxy_url }}"
+      tags:
+        - dns
+
+    - name: "Add internal DNS Records"
+      uri:
+        url: "http://192.168.0.22/control/rewrite/add"
+        method: POST
+        username: "{{ adguard_user }}"
+        password: "{{ adguard_pw }}"
+        headers:
+          Content-Type: application/json
+        body:
+          {
+            "domain": "{{ container_url }}",
+            "answer": "{{ proxy_url }}"
+          }
+        body_format: json
       tags:
         - dns
