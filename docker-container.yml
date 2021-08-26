@@ -144,7 +144,7 @@
     - name: "Add internal DNS Records"
       lineinfile:
         path: "{{ pihole_config }}/05-pihole-custom-cname.conf"
-        line: "CNAME={{ container_url }},{{ proxy_url }}"
+        line: "cname={{ container_url }},{{ proxy_url }}"
       tags:
         - dns
 

@@ -3,6 +3,7 @@ http:
     {{ container_name }}:
       rule: "Host(`{{ container_name }}.fab-it.biz`)"
       entryPoints: "https"
+      # disable middlewares to disable authentication
       middlewares:
         - authelia@file
       service: {{ container_name }}
