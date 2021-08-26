@@ -14,3 +14,12 @@ Template for creating Docker containers and add the to netbox
 # Usage
 
 `ansible-playbook -Kb --ask-vault-password docker-container.yml`
+
+# Update repo from templae
+
+```
+git remote add template git@github.com:Fabaderheld/ansible-docker.git
+git fetch --all
+git merge template/main  --allow-unrelated-histories 
+```
+
