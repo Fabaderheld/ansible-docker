@@ -116,7 +116,23 @@
       community.docker.docker_compose:
         project_src: "{{ docker_temppath }}//{{ container_name }}"
     #      register: output
-        
+
+    - name: "Get container info from {{ container_name }}"
+      community.docker.docker_container_info:
+        name: "{{ container_name }}"
+      register: containerinfo
+
+    - name: "Set Container Mac on VM Interface"
+      netbox.netbox.netbox_vm_interface:
+        netbox_url: "http://{{ netbox_url }}"
+        netbox_token: "{{ netbox_apitoken }}"
+        data:
+          virtual_machine: "{{ container_name }}"
+          name: GigabitEthernet1
+          mac_address: "{{ containerinfo['container']['NetworkSettings']['Networks']['Docker']['MacAddress'] }}"
+        state: present
+      when: containerinfo['container'] is defined
+
     - name: "Add external DNS Records"
       uri:
         url: "https://dns.hetzner.com/api/v1/records"
