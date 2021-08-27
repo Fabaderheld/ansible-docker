@@ -168,8 +168,9 @@
       uri:
         url: "http://192.168.0.22/control/rewrite/add"
         method: POST
-        username: "{{ adguard_user }}"
-        password: "{{ adguard_pw }}"
+        url_username : "{{ adguard_user }}"
+        url_password: "{{ adguard_pw }}"
+        force_basic_auth: yes
         headers:
           Content-Type: application/json
         body:
